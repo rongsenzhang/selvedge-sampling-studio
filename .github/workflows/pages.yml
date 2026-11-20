@@ -16,6 +16,7 @@ jobs:
           node-version: '24'
       - run: npm ci
       - run: npm test
+      - run: npm run build:gateway
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - uses: actions/upload-pages-artifact@v4

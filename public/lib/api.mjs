@@ -10,7 +10,7 @@ export async function handleApi(request, route, repository) {
       if (route === 'catalogue') return json({ rulesVersion, scenarios, rules });
       if (route === 'reviews') return json(await repository.list());
       if (route === 'health')
-        return json({ version: '1.0.0', rulesVersion, storage: repository.storage });
+        return json({ version: '1.1.0', rulesVersion, storage: repository.storage });
     }
     if (request.method === 'POST' && (route === 'analyse' || route === 'reviews')) {
       if (request.headers.get('Content-Type')?.split(';')[0].trim() !== 'application/json') {

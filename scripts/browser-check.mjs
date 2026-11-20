@@ -5,6 +5,7 @@ import { extname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { expect } from 'playwright/test';
+import { checkAiWorkshop } from './check-ai-workshop.mjs';
 
 const timeout = 15_000;
 const check = expect.configure({ timeout });
@@ -236,6 +237,7 @@ async function run() {
     }
     await verifyFlow(browser, target, false, false);
     if (!process.env.STUDIO_URL) {
+      await checkAiWorkshop(browser, target, { checkWidth, downloadedJson });
       const { createStudio } = await import('../server/main.mjs');
       studio = createStudio(':memory:');
       await verifyFlow(browser, (await listen(studio.server)) + '/', true, false);

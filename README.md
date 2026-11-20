@@ -1,12 +1,16 @@
 # Selvedge Studio
 
-**[Open the live fabric book planner](https://rongsenzhang.github.io/selvedge-sampling-studio/)** · [Try the knowledge workshop](https://rongsenzhang.github.io/selvedge-sampling-studio/workshop.html) · [Version 1.0](https://github.com/rongsenzhang/selvedge-sampling-studio/releases/tag/v1.0.0)
+**[Try the knowledge workshop](https://rongsenzhang.github.io/selvedge-sampling-studio/workshop.html)** · [Open the fabric book planner](https://rongsenzhang.github.io/selvedge-sampling-studio/) · [Version 1.0 release](https://github.com/rongsenzhang/selvedge-sampling-studio/releases/tag/v1.0.0)
 
 A small interiors collection needs 180 presentation books in six colourways. Will rotating each swatch save material? What happens if the cloth must run in one direction, or the stock is short? Selvedge Studio takes that brief from layout and costing to an explained production review.
 
 Independent application demonstrator for the **Smart Design Software Engineer KTP Associate** role at the University of Suffolk and Pike Textiles. It uses synthetic jobs, assumed equal stock by colour and illustrative rates. The application does not connect to a factory or issue commercial quotations. [University vacancy](https://careers.uos.ac.uk/job/989445) · [Public research and competitor comparison](docs/research.md)
 
 [中文技术路线与演示指南](docs/guide-zh.md)
+
+## Try the v1.1 workshop
+
+Enter a synthetic observation such as “For a fraying edge, reserve 7% of the planned cut length for a trial cut.” If live drafting is configured, select **Generate a draft**. Inspect the quoted evidence, the follow-up question and the counterexample. Select **Use 7% in the draft** to copy the figure, then **Test proposal** to see what happens to a tight-stock job. You can always test a percentage manually. Recorded responses, when supplied, are labelled with their model and date. [Workshop examples, architecture and verification](docs/ai-workshop.md)
 
 ## Two minutes at the workbench
 
@@ -15,7 +19,7 @@ Independent application demonstrator for the **Smart Design Software Engineer KT
 3. Load **Archive weave collection**. A directional cut fits, but the fraying edge needs a physical trial. Add a reviewer note, save and download its JSON. Open the review log after a reload to recover the snapshot.
 4. In the **[knowledge workshop](https://rongsenzhang.github.io/selvedge-sampling-studio/workshop.html)**, test a proposed trial-cut allowance against three fixtures and export the evidence for a rule owner's decision.
 
-The public app runs without an account, API key or payment. Saved reviews belong to the current browser profile and device. Export one to share it. The Node edition below offers a persistent database and HTTP integration.
+Visitors can use the public app without an account, API key or payment. Saved reviews belong to the current browser profile and device. Export one to share it. The Node edition below offers a persistent database and HTTP integration.
 
 ![The default linen brief, cutting diagram, material utilisation and indicative cut cost](docs/images/planner.webp)
 
@@ -26,6 +30,7 @@ The public app runs without an account, API key or payment. Saved reviews belong
 | What does Pike make, and what do direct competitors already offer? | [Company research, three competitors and the site inventory](docs/research.md) |
 | Why this workflow, architecture and data model? | [Technical route, system diagram and API contract](docs/technical-route.md) |
 | Can I check the metres, pence, rule states and case ranking myself? | [Worked example and model assumptions](docs/model.md) · [decision engine](public/lib/engine.mjs) |
+| How does AI interpret an observation, and who accepts the number? | [AI workshop and deployment checks](docs/ai-workshop.md) |
 | What actually passed, and what would need a site trial? | [Validation record](docs/validation.md) · [automated runs](https://github.com/rongsenzhang/selvedge-sampling-studio/actions) |
 | How could supervisors test employee adoption, manage risk and disseminate results? | [KTP responsibilities, training, field study and 24-month pilot proposal](docs/ktp-delivery.md) |
 
@@ -40,6 +45,8 @@ npm test
 ```
 
 The local edition serves the same UI, persists reviews in `data/studio.sqlite` and streams review updates to other open clients. Set `STUDIO_DB`, `HOST` or `PORT` to change these defaults. The development container also starts this server and forwards port 4173.
+
+To enable live workshop drafting locally, set the server’s `OPENAI_API_KEY` through your environment or secret manager before starting Node. The planner and manual workshop also run without it. [AI runtime and quotas](docs/ai-workshop.md)
 
 For the browser regression suite:
 

@@ -5,6 +5,7 @@ import { dirname, resolve, extname, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { handleApi } from '../public/lib/api.mjs';
 import { makeRecord, checkReplay } from '../public/lib/records.mjs';
+import { draftObservation, inputObservation } from './ai-draft.mjs';
 
 const publicRoot = fileURLToPath(new URL('../public/', import.meta.url));
 const types = {
@@ -19,7 +20,10 @@ const types = {
   '.woff2': 'font/woff2',
 };
 
-export function createStudio(dbPath = ':memory:') {
+export function createStudio(
+  dbPath = ':memory:',
+  { apiKey, model, fetchImpl = fetch, now = Date.now } = {},
+) {
   const db = new DatabaseSync(dbPath);
   db.exec(`PRAGMA journal_mode=WAL;
     PRAGMA busy_timeout=5000;
@@ -27,7 +31,23 @@ export function createStudio(dbPath = ':memory:') {
       id TEXT PRIMARY KEY, created_at TEXT NOT NULL, scenario_id TEXT NOT NULL,
       note TEXT NOT NULL, rules_version TEXT NOT NULL, brief_json TEXT NOT NULL,
       result_json TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('ready','review','blocked')));
-    CREATE INDEX IF NOT EXISTS by_review_date ON reviews(created_at DESC, id DESC);`);
+    CREATE INDEX IF NOT EXISTS by_review_date ON reviews(created_at DESC, id DESC);
+    CREATE TABLE IF NOT EXISTS ai_request_budget (utc_day TEXT PRIMARY KEY, used INTEGER NOT NULL);`);
+  // The shared daily counter survives restarts with a file-backed studio database.
+  const reserveDaily = db.prepare(`
+    INSERT INTO ai_request_budget (utc_day, used) VALUES (?, 1)
+    ON CONFLICT(utc_day) DO UPDATE SET used=used+1 WHERE used < 24`);
+  let minuteStarts = [];
+  function reserveAiRequest() {
+    const time = now();
+    minuteStarts = minuteStarts.filter((started) => started > time - 60000);
+    if (minuteStarts.length >= 4) return Math.ceil((minuteStarts[0] + 60000 - time) / 1000);
+    const utcDay = new Date(time).toISOString().slice(0, 10);
+    if (!reserveDaily.run(utcDay).changes) return Math.ceil((86400000 - (time % 86400000)) / 1000);
+    minuteStarts.push(time);
+    return 0;
+  }
+  const aiEnabled = typeof apiKey === 'string' && Boolean(apiKey.trim()) && !/[\r\n]/.test(apiKey);
   const streams = new Set();
   const byId = db.prepare('SELECT * FROM reviews WHERE id=?');
   const insert = db.prepare(
@@ -79,10 +99,48 @@ export function createStudio(dbPath = ':memory:') {
     res.setHeader('Cache-Control', 'no-store');
     try {
       const url = new URL(req.url, 'http://localhost');
+      if (url.pathname === '/ai-config.json') {
+        if (!['GET', 'HEAD'].includes(req.method))
+          return fail(405, 'Use GET for studio configuration.');
+        res.writeHead(200, { 'Content-Type': types['.json'] });
+        const config = { endpoint: aiEnabled ? './api/v1/ai/draft' : null };
+        return res.end(req.method === 'HEAD' ? undefined : JSON.stringify(config));
+      }
       if (url.pathname.startsWith('/api/v1/')) {
         const route = url.pathname.slice('/api/v1/'.length);
-        if (req.headers.origin && new URL(req.headers.origin).host !== req.headers.host)
-          return fail(403, 'Use the same studio origin.');
+        const aiRoute = route === 'ai/draft';
+        if (req.headers.origin) {
+          let origin;
+          try {
+            origin = new URL(req.headers.origin);
+          } catch {
+            return fail(403, 'Use the same studio origin.');
+          }
+          if (
+            origin.host !== req.headers.host ||
+            !['http:', 'https:'].includes(origin.protocol) ||
+            origin.origin !== req.headers.origin
+          )
+            return fail(403, 'Use the same studio origin.');
+          // Same-origin fetch metadata also works behind the HTTPS Codespaces proxy.
+          if (
+            aiRoute &&
+            origin.protocol !== 'http:' &&
+            req.headers['sec-fetch-site'] !== 'same-origin'
+          )
+            return fail(403, 'Use the same studio origin.');
+        }
+        if (aiRoute) {
+          const fetchSite = req.headers['sec-fetch-site'];
+          if (fetchSite && fetchSite !== 'same-origin' && fetchSite !== 'none')
+            return fail(403, 'Use the same studio origin.');
+          if (req.method !== 'POST') return fail(405, 'Use POST to draft a rule.');
+          if (!aiEnabled) return fail(503, 'Live AI is not configured. Use the manual workshop.');
+          if (
+            req.headers['content-type']?.split(';')[0].trim().toLowerCase() !== 'application/json'
+          )
+            return fail(415, 'Send JSON with application/json.');
+        }
         if (route === 'events' && req.method === 'GET') {
           res.writeHead(200, {
             'Content-Type': 'text/event-stream',
@@ -98,14 +156,52 @@ export function createStudio(dbPath = ':memory:') {
           });
           return;
         }
+        const bodyLimit = aiRoute ? 4096 : 32768;
+        if (Number(req.headers['content-length']) > bodyLimit)
+          return fail(413, 'Payload too large.');
         let size = 0;
         const parts = [];
         for await (const part of req) {
           size += part.length;
-          if (size > 32768) return fail(413, 'Payload too large.');
+          if (size > bodyLimit) return fail(413, 'Payload too large.');
           parts.push(part);
         }
         const body = ['GET', 'HEAD'].includes(req.method) ? undefined : Buffer.concat(parts);
+        if (aiRoute) {
+          let input;
+          try {
+            input = JSON.parse(body.toString('utf8'));
+          } catch {
+            return fail(400, 'Invalid JSON.');
+          }
+          const disconnect = new AbortController();
+          const onDisconnect = () => disconnect.abort();
+          res.once('close', onDisconnect);
+          try {
+            const observation = inputObservation(input);
+            const wait = reserveAiRequest();
+            if (wait) {
+              res.setHeader('Retry-After', String(wait));
+              return fail(
+                429,
+                'The local studio AI request budget has been reached. Continue manually or try again later.',
+              );
+            }
+            const draft = await draftObservation(
+              { observation },
+              { apiKey, model, fetchImpl, signal: disconnect.signal },
+            );
+            res.writeHead(200, { 'Content-Type': types['.json'] });
+            return res.end(JSON.stringify(draft));
+          } catch (error) {
+            if (res.destroyed) return;
+            const status = error.status;
+            if ([400, 422, 429, 502, 503, 504].includes(status)) return fail(status, error.message);
+            return fail(500, 'Could not prepare the AI draft. Use the manual workshop.');
+          } finally {
+            res.off('close', onDisconnect);
+          }
+        }
         const answer = await handleApi(
           new Request(url, { method: req.method, headers: req.headers, body }),
           route,
@@ -153,7 +249,10 @@ export function createStudio(dbPath = ':memory:') {
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
   const file = resolve(process.env.STUDIO_DB ?? 'data/studio.sqlite');
   await mkdir(dirname(file), { recursive: true });
-  const studio = createStudio(file);
+  const studio = createStudio(file, {
+    apiKey: process.env.OPENAI_API_KEY,
+    model: process.env.OPENAI_MODEL || undefined,
+  });
   const host = process.env.HOST ?? '127.0.0.1';
   const port = Number(process.env.PORT ?? 4173);
   studio.server.listen(port, host, () =>

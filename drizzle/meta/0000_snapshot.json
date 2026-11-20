@@ -1,0 +1,62 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "d4cdc113-c53a-4f85-a839-290de41de923",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "ai_quota": {
+      "name": "ai_quota",
+      "columns": {
+        "utc_day": {
+          "name": "utc_day",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "client_tag": {
+          "name": "client_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "admitted": {
+          "name": "admitted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "ai_quota_utc_day_client_tag_pk": {
+          "columns": [
+            "utc_day",
+            "client_tag"
+          ],
+          "name": "ai_quota_utc_day_client_tag_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "positive_admission": {
+          "name": "positive_admission",
+          "value": "admitted > 0"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

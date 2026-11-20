@@ -160,3 +160,67 @@
     min-height: 36px;
   }
 }
+.ai-assistant {
+  margin: 17px 0 20px;
+  padding: 14px 15px;
+  background: #f1f4eb;
+  border: 1px solid #d1dcca;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}
+.ai-assistant h3,
+.ai-assistant h4 {
+  color: var(--green);
+  font-size: 0.98rem;
+  line-height: 1.4;
+  font-weight: 650;
+  margin: 0;
+}
+.ai-mode,
+.ai-message,
+.ai-output dd {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.ai-mode {
+  margin-top: 4px;
+}
+.ai-message:not(:empty),
+#ai-generate,
+#ai-adopt {
+  margin-top: 10px;
+}
+.ai-message[data-state='error'] {
+  color: var(--rust);
+}
+.ai-output,
+#ai-examples {
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+#ai-examples label {
+  margin-top: 0;
+}
+#ai-examples select {
+  text-overflow: ellipsis;
+}
+#ai-load {
+  margin-top: 3px;
+}
+.ai-output dl {
+  margin: 8px 0 0;
+}
+.ai-output dt {
+  margin-top: 7px;
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+.ai-output dd {
+  margin: 1px 0;
+}
+.ai-output dd ul {
+  margin: 2px 0;
+  padding-left: 18px;
+}

@@ -1,6 +1,17 @@
 # 申请者演示指南
 
-[打开在线工作台](https://rongsenzhang.github.io/selvedge-sampling-studio/) · [打开规则工作坊](https://rongsenzhang.github.io/selvedge-sampling-studio/workshop.html)
+**[先体验规则工作坊](https://rongsenzhang.github.io/selvedge-sampling-studio/workshop.html)** · [打开裁切工作台](https://rongsenzhang.github.io/selvedge-sampling-studio/) · [查看 v1.0 发布记录](https://github.com/rongsenzhang/selvedge-sampling-studio/releases/tag/v1.0.0)
+
+## v1.1 怎样演示 AI
+
+在 **Production observation** 填一条虚构的英文观察。工作坊会显示当前部署是否支持实时生成。只有点击 **Generate a draft** 才会向 OpenAI 发送这段输入。出现 **Recorded OpenAI response** 时，页面展示的是注明模型和日期的预生成结果。演示使用合成数据，不涉及上传工厂工单、员工访谈或客户信息。
+
+| 输入 | 招聘团队可以核查什么 |
+| --- | --- |
+| *For a fraying edge, reserve 7% of the planned cut length for a trial cut.* | 核对模型引用的原话、复核问题与反例。点击 **Use 7% in the draft** 采纳，再点 **Test proposal**。需要 28.80 米的工单加上试裁余量后需要 30.816 米，与 30 米库存相比缺 0.816 米。 |
+| *For a fraying edge, allow some extra material for a trial cut.* | 这句话缺少可执行的百分比。检查助手是否要求澄清，以及页面是否阻止采纳未经说明的数值。即使没有实时服务，也可以在下方手工填写并测试。 |
+
+后端利用 OpenAI Responses API 和严格的结构化输出，默认模型为 `gpt-4.1-mini`。服务端验证引文与百分比，浏览器再次核对原始观察。被采纳的草案要经过三组案例测试，再由生产负责人决定如何做实物试裁。公开网关的设计额度是每个 UTC 日总计 100 次、每个客户端 10 次。本机 Node 版为每个 UTC 日 24 次、每个滚动分钟 4 次。请求体上限均为 4 KiB。实时连通性以当前部署实际返回的结果为准。[AI 工作坊与验收方法](ai-workshop.md)
 
 ## 为什么选择布样册
 

@@ -31,6 +31,23 @@
           <label for="observation">Production observation</label>
           <textarea id="observation" name="observation" required maxlength="500" rows="4" aria-describedby="observation-help"></textarea>
           <p class="field-help" id="observation-help">A fictional workshop note. Edit it using synthetic details.</p>
+          <section class="ai-assistant" aria-labelledby="ai-title">
+            <h3 id="ai-title">AI drafting assistant</h3>
+            <p class="ai-mode" id="ai-mode" role="status">Checking assistant availability…</p>
+            <button id="ai-generate" type="button" class="outline-button" hidden>Generate a draft</button>
+            <div id="ai-examples" hidden>
+              <label for="ai-example">Recorded OpenAI examples</label>
+              <select id="ai-example"></select>
+              <button type="button" id="ai-load" class="text-button">Load example and response</button>
+            </div>
+            <p id="ai-message" class="ai-message" role="status"></p>
+            <div id="ai-output" class="ai-output" hidden>
+              <h4 id="ai-source"></h4>
+              <p id="ai-provenance" class="field-help"></p>
+              <dl id="ai-findings"></dl>
+              <button id="ai-adopt" type="button" class="outline-button" hidden>Use suggested reserve</button>
+            </div>
+          </section>
           <label for="reserve-percent">Trial reserve for a fraying edge</label>
           <div class="unit-input reserve-input"><input type="number" id="reserve-percent" name="reservePercent" inputmode="numeric" min="0" max="20" step="1" required aria-describedby="reserve-help"><span aria-hidden="true">%</span></div>
           <p class="field-help" id="reserve-help">Use a whole percentage from 0 to 20. Apply it to the planned cut length for each colourway.</p>

@@ -27,3 +27,7 @@ The fraying-edge workshop checks an invented hypothesis. At 5% the model asks wh
 No company or client participated in this release. Production rates, costs, historical jobs, examples and workshop testimony are simulated. The model assumes equal stock for each colour, one usable width, rectangular pieces and uniform orientation. It excludes blade allowance, repeat matching, defects, mixed-orientation nesting, assembly and delivery. A physical sample, roll-level inventory and an authorised estimator are needed before operational use.
 
 There has been no physical-device lab test, assisted-technology user study, formal accessibility certification, production ERP integration or commercial impact study. [Field validation and knowledge transfer protocol](ktp-delivery.md)
+
+## AI extension
+
+The version 1.1 test suite adds 22 checks to the original 21. They exercise strict structured responses, exact evidence spans, missing or conflicting percentages, provider errors, HTTP validation, client-side response validation and concurrent quota accounting. A local mobile browser flow uses a controlled response to verify that generation, adoption and rule testing remain separate actions. These tests use synthetic inputs and run without a provider key. A live acceptance check is recorded separately when a deployment connects to OpenAI.
