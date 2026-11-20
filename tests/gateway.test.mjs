@@ -83,6 +83,18 @@ function total(sqlite) {
   return sqlite.prepare('SELECT COALESCE(SUM(admitted),0) AS n FROM ai_quota').get().n;
 }
 
+test('opening the service root sends visitors to the public rule workshop', async () => {
+  const workshop = published + '/selvedge-sampling-studio/workshop.html';
+  for (const method of ['GET', 'HEAD']) {
+    const response = await worker.fetch(new Request(service + '/?from=preview', { method }), {});
+    assert.equal(response.status, 302);
+    assert.equal(response.headers.get('Location'), workshop);
+    assert.equal(response.headers.get('Cache-Control'), 'no-store');
+    assert.equal(await response.text(), '');
+  }
+  assert.equal((await worker.fetch(new Request(service, { method: 'POST' }), {})).status, 404);
+});
+
 test('public health, routing and both permitted origins expose only the intended contract', async (t) => {
   const { env, sqlite } = fixture(t);
   const health = await worker.fetch(new Request(service + '/health'), env);

@@ -66,6 +66,10 @@ export async function handleGateway(request, env, fetchImpl = fetch) {
   if (source && source !== origin && source !== publicOrigin)
     return send({ error: 'Origin unavailable.' }, 403);
   if (source) headers.set('Access-Control-Allow-Origin', source);
+  if (pathname === '/' && (request.method === 'GET' || request.method === 'HEAD')) {
+    headers.set('Location', publicOrigin + '/selvedge-sampling-studio/workshop.html');
+    return new Response(null, { status: 302, headers });
+  }
   if (pathname === '/health' && request.method === 'GET')
     return send({ configured: isConfigured(env), version });
   if (pathname !== draftPath) return send({ error: 'Route unavailable.' }, 404);
