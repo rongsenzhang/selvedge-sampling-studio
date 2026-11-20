@@ -1,1 +1,3 @@
-{ "endpoint": null }
+{
+  "endpoint": "https://selvedge-studio-rule-service.dark-betta-0975.chatgpt.site/api/v1/ai/draft"
+}

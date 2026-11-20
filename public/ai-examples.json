@@ -1,1 +1,34 @@
-{ "examples": [] }
+{
+  "examples": [
+    {
+      "observation": "When the cut edge frays, reserve 5% per colourway for the trial cut.",
+      "scope": "trial-reserve",
+      "suggestedPercent": 5,
+      "condition": "A synthetic brief describes a fraying edge and gives a trial reserve.",
+      "action": "Test the stated reserve against the workshop cases and send the draft for review.",
+      "questions": [
+        "What single whole percentage of the planned cut length should the trial reserve use?",
+        "Does the allowance apply specifically to a trial cut on a fraying edge?"
+      ],
+      "counterexample": "Consider a stable edge where adding a trial reserve would alter an otherwise feasible run.",
+      "evidenceQuote": "When the cut edge frays, reserve 5% per colourway for the trial cut.",
+      "model": "gpt-4.1-mini",
+      "generatedAt": "2026-11-20T23:07:52.035Z"
+    },
+    {
+      "observation": "If our swatches fray at the cut edge, set aside a little fabric for the trial cut.",
+      "scope": "needs-clarification",
+      "suggestedPercent": null,
+      "condition": "The observation leaves the proposed trial reserve or its trigger unclear.",
+      "action": "Ask the operator to clarify the observation before testing a reserve.",
+      "questions": [
+        "What single whole percentage of the planned cut length should the trial reserve use?",
+        "Does the allowance apply specifically to a trial cut on a fraying edge?"
+      ],
+      "counterexample": "Consider a fraying edge where stock covers the base cut and falls short of the trial reserve.",
+      "evidenceQuote": "If our swatches fray at the cut edge, set aside a little fabric for the trial cut.",
+      "model": "gpt-4.1-mini",
+      "generatedAt": "2026-11-20T23:07:53.078Z"
+    }
+  ]
+}

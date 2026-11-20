@@ -10,7 +10,7 @@ Independent application demonstrator for the **Smart Design Software Engineer KT
 
 ## Try the v1.1 workshop
 
-Enter a synthetic observation such as “For a fraying edge, reserve 7% of the planned cut length for a trial cut.” If live drafting is configured, select **Generate a draft**. Inspect the quoted evidence, the follow-up question and the counterexample. Select **Use 7% in the draft** to copy the figure, then **Test proposal** to see what happens to a tight-stock job. You can always test a percentage manually. Recorded responses, when supplied, are labelled with their model and date. [Workshop examples, architecture and verification](docs/ai-workshop.md)
+Enter a synthetic observation such as “For a fraying edge, reserve 7% of the planned cut length for a trial cut.” Select **Generate a draft** to call the live service. Inspect the quoted evidence, the follow-up question and the counterexample. Select **Use 7% in the draft** to copy the figure, then **Test proposal** to see what happens to a tight-stock job. You can always test a percentage manually. Two genuine recorded responses are also available with their model and generation time. [Workshop examples, architecture and verification](docs/ai-workshop.md)
 
 ## Two minutes at the workbench
 
