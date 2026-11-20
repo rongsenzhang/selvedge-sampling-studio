@@ -1,0 +1,7 @@
+{
+  "name": "Selvedge Studio",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24",
+  "forwardPorts": [4173],
+  "portsAttributes": {"4173": {"label":"Selvedge Studio", "onAutoForward":"notify"}},
+  "postStartCommand": "nohup env HOST=0.0.0.0 node server/main.mjs > /tmp/selvedge-studio.log 2>&1 &"
+}

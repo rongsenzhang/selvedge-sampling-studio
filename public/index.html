@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#183e34">
+  <meta name="description" content="An independent fabric sample-book planning demo. Compare cutting layouts, inspect manufacturing rules and export a review.">
+  <title>Selvedge Studio · Fabric book planner</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to planner</a>
+  <header class="site-head">
+    <div class="head-inner">
+      <a class="brand" href="#main" aria-label="Selvedge Studio home"><span class="loom-mark" aria-hidden="true"></span>Selvedge Studio</a>
+      <nav aria-label="Studio navigation">
+        <a class="nav-active" href="#main">Workbench</a>
+        <button id="open-log" type="button">Review log <span id="record-count" class="nav-count">0</span></button>
+        <a class="repo-nav" href="./workshop.html">Knowledge workshop</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="page" tabindex="-1">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow"><span class="orange-tick" aria-hidden="true"></span>Independent sampling demo</p>
+        <h1 id="page-title">Fabric book planner</h1>
+        <p class="intro-copy">Plan a sample-book run, compare cutting layouts and record a production review.</p>
+      </div>
+      <div class="example-field">
+        <label for="scenario">Load a synthetic brief</label>
+        <select id="scenario" disabled><option>Loading examples…</option></select>
+      </div>
+    </section>
+
+    <p class="error-banner" id="error-banner" role="alert" hidden></p>
+    <div class="mobile-jumps"><a href="#brief">Edit brief</a><a href="#review">Review &amp; save</a><a href="./workshop.html">Rule workshop</a></div>
+    <div class="workspace">
+      <section class="panel brief" id="brief" aria-labelledby="brief-title">
+        <div class="panel-head"><h2 id="brief-title">Production brief</h2></div>
+        <p class="brief-description" id="scenario-description">Select a sample brief to begin.</p>
+        <form id="brief-form">
+          <fieldset>
+            <legend>Book run</legend>
+            <div class="field-row">
+              <label>Books required<input type="number" name="quantity" required inputmode="numeric"></label>
+              <label>Colourways<input type="number" name="colourways" required inputmode="numeric"></label>
+            </div>
+            <p class="field-help">One swatch of each colourway per book.</p>
+          </fieldset>
+          <fieldset>
+            <legend>Cut dimensions</legend>
+            <div class="field-row">
+              <label>Swatch width<span class="unit-input"><input type="number" name="swatchWidthMm" required inputmode="numeric"><span>mm</span></span></label>
+              <label>Swatch height<span class="unit-input"><input type="number" name="swatchHeightMm" required inputmode="numeric"><span>mm</span></span></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Material</legend>
+            <div class="field-row">
+              <label>Cuttable width<span class="unit-input"><input type="number" name="rollWidthMm" required inputmode="numeric"><span>mm</span></span></label>
+              <label>Total stock<span class="unit-input"><input type="number" name="stockMetres" required inputmode="decimal"><span>m</span></span></label>
+            </div>
+            <p class="field-help">Stock is split equally across colourways.</p>
+            <label class="full-field">Grain direction
+              <select name="grain"><option value="free">Rotation permitted</option><option value="locked">Keep original direction</option></select>
+            </label>
+            <label class="full-field">Edge behaviour
+              <select name="edge"><option value="stable">Stable edge</option><option value="frays">Prone to fraying</option></select>
+            </label>
+          </fieldset>
+          <div class="brief-bottom"><button type="button" id="restore" class="text-button" disabled>Restore example</button><span id="edit-state"></span></div>
+        </form>
+      </section>
+      <section class="panel cut-plan" id="cut-plan" aria-labelledby="plan-title">
+        <div class="panel-head plan-head"><div><p class="overline">Material planning</p><h2 id="plan-title">Cutting layout</h2></div><span class="pill neutral" id="plan-status">Loading</span></div>
+        <figure class="diagram">
+          <div class="diagram-top"><span id="plot-caption">ROLL PLAN</span><span id="plot-scale"></span></div>
+          <canvas id="cut-canvas" aria-label="Cutting layout for the selected brief" role="img"></canvas>
+          <figcaption><span class="legend-item"><i class="sample-key"></i>Swatch</span><span class="legend-item"><i class="offcut-key"></i>Unused cloth</span><span class="diagram-orientation" id="diagram-orientation"></span></figcaption>
+        </figure>
+        <div class="metrics" aria-label="Plan summary">
+          <div><span>Roll length</span><strong id="required">—</strong></div>
+          <div><span>Material use</span><strong id="yield">—</strong></div>
+          <div><span>Illustrative cut cost</span><strong id="estimate">—</strong></div>
+        </div>
+        <div class="plan-foot"><span id="plan-context">Waiting for brief</span><a href="#costs">Cost breakdown</a></div>
+      </section>
+      <section class="panel analysis" aria-labelledby="assessment-title">
+        <div class="panel-head"><div><p class="overline">Decision support</p><h2 id="assessment-title">Production checks</h2></div></div>
+        <div id="rule-checks" class="checks"></div>
+        <div class="details-stack">
+          <details id="layouts"><summary>Compare cutting directions</summary><div id="options" class="detail-body"></div></details>
+          <details id="costs"><summary>Illustrative cost breakdown</summary><div id="cost-lines" class="detail-body"></div></details>
+          <details id="history"><summary>Similar reference jobs</summary><div id="matches" class="detail-body"></div></details>
+        </div>
+        <div class="workshop-link"><a href="./workshop.html">Open the knowledge workshop</a><span>Test a proposed rule against sample briefs.</span></div>
+      </section>
+      <section class="panel review" id="review" aria-labelledby="review-title">
+        <div class="panel-head"><div><p class="overline">Workshop handover</p><h2 id="review-title">Review &amp; save</h2></div></div>
+        <p id="storage-info" class="review-copy"></p>
+        <label for="note">Reviewer note <span class="optional">(optional)</span></label>
+        <textarea id="note" maxlength="500" rows="3" placeholder="Record a decision or follow-up for the production team."></textarea>
+        <div class="save-row"><button id="save" type="button" class="solid-button" disabled>Save review</button><button id="last-export" type="button" class="text-button" hidden>Download saved JSON</button></div>
+        <p class="action-message" id="save-message" role="status"></p>
+      </section>
+    </div>
+    <p class="sr-only" role="status" id="live-analysis"></p>
+    <footer class="footer"><span>Independent prototype · Synthetic briefs and illustrative GBP costs.</span><a href="https://github.com/rongsenzhang/selvedge-sampling-studio">Project, method &amp; sources on GitHub</a></footer>
+  </main>
+  <dialog id="log-dialog" aria-labelledby="log-title">
+    <div class="dialog-inner"><div class="dialog-head"><div><p class="overline">Workshop handover</p><h2 id="log-title">Review log</h2></div><button id="close-log" class="outline-button" type="button">Close</button></div>
+      <p id="log-scope" class="review-copy"></p><div id="log-entries"></div>
+    </div>
+  </dialog>
+  <noscript><p class="error-banner">Enable JavaScript to open the interactive planner.</p></noscript>
+  <script type="module" src="./app.mjs"></script>
+</body>
+</html>

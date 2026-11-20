@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#193e34">
+  <meta name="description" content="Turn a synthetic production observation into an explicit trial-cut rule, test it against three briefs and export a review draft.">
+  <title>Rule workshop · Selvedge Studio</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to rule workshop</a>
+  <header class="site-head">
+    <div class="head-inner">
+      <a class="brand" href="./"><span class="loom-mark" aria-hidden="true"></span>Selvedge Studio</a>
+      <nav aria-label="Studio navigation"><a href="./">Workbench</a><a href="./workshop.html" aria-current="page" class="nav-active">Rule workshop</a></nav>
+    </div>
+  </header>
+  <main class="page" id="main" tabindex="-1">
+    <section class="intro workshop-intro" aria-labelledby="page-title">
+      <div><p class="eyebrow"><span class="orange-tick" aria-hidden="true"></span>Production knowledge</p><h1 id="page-title">Rule workshop</h1>
+        <p class="intro-copy">Turn a sampling colleague’s observation into a testable trial-cut allowance.</p></div>
+    </section>
+    <noscript><p class="error-banner">Enable JavaScript to test and export a proposal.</p></noscript>
+    <div class="workshop-grid">
+      <section class="panel draft-panel" aria-labelledby="draft-title">
+        <div class="panel-head"><h2 id="draft-title">Capture a rule</h2></div>
+        <form id="proposal-form">
+          <label for="observation">Production observation</label>
+          <textarea id="observation" name="observation" required maxlength="500" rows="4" aria-describedby="observation-help"></textarea>
+          <p class="field-help" id="observation-help">A fictional workshop note. Edit it using synthetic details.</p>
+          <label for="reserve-percent">Trial reserve for a fraying edge</label>
+          <div class="unit-input reserve-input"><input type="number" id="reserve-percent" name="reservePercent" inputmode="numeric" min="0" max="20" step="1" required aria-describedby="reserve-help"><span aria-hidden="true">%</span></div>
+          <p class="field-help" id="reserve-help">Use a whole percentage from 0 to 20. Apply it to the planned cut length for each colourway.</p>
+          <label for="review-action">When the reserve exceeds stock</label>
+          <select id="review-action" name="reviewAction" required></select>
+          <label for="owner-role">Proposed review owner</label>
+          <select id="owner-role" name="ownerRole" required></select>
+          <button type="submit" id="test-proposal" class="solid-button">Test proposal</button>
+          <p class="form-message" id="draft-message" role="status"></p>
+        </form>
+      </section>
+      <section class="panel evidence-panel" aria-labelledby="evidence-title">
+        <div class="panel-head"><h2 id="evidence-title">Acceptance checks</h2><span class="pill neutral" id="result-summary">Loading</span></div>
+        <div id="tested-result">
+          <p class="tested-rule" id="rule-text"></p>
+          <div id="case-results"></div>
+          <div class="export-bar">
+            <div><strong id="proposal-status"></strong><p id="proposal-next" class="field-help"></p></div>
+            <button type="button" id="download-proposal" class="outline-button" disabled>Download draft JSON</button>
+          </div>
+        </div>
+        <p id="pending-result" class="pending-result" hidden>The draft has changed. Test the proposal to refresh its three cases.</p>
+      </section>
+    </div>
+    <p class="sr-only" id="result-update" role="status"></p>
+    <footer class="footer"><span>Independent exercise · Synthetic observations, stock and job briefs.</span><a href="https://github.com/rongsenzhang/selvedge-sampling-studio/blob/main/docs/model.md">Read the cutting model on GitHub</a></footer>
+  </main>
+  <template id="case-template">
+    <article class="case-row">
+      <div class="case-head"><h3></h3><span class="check-glyph case-pass"></span></div>
+      <p class="case-expected"></p>
+      <dl class="case-values">
+        <div><dt>Stock</dt><dd class="case-stock"></dd></div>
+        <div><dt>Current cut</dt><dd class="case-before"></dd></div>
+        <div><dt>With trial reserve</dt><dd class="case-after"></dd></div>
+      </dl>
+      <p class="case-action"></p>
+    </article>
+  </template>
+  <script type="module" src="./workshop.mjs"></script>
+</body>
+</html>
