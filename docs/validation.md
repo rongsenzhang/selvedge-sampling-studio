@@ -11,7 +11,10 @@ Use Node 24+, then run `npm test`. For the browser flows run `npm ci`, `npx play
 | Knowledge workshop | Six tests exercise the proposed allowance, failed boundary examples, rounding, existing blocks, ownership and serialisation, and invalid drafts. |
 | Desktop and mobile interaction | Chromium runs at 1440 and 390 CSS pixels with a further 320-pixel overflow check. It tests both runtime paths, edits inputs, saves and reopens reviews, reads exported JSON, checks isolation/notifications, changes the proposed rule and checks for unintended horizontal scrolling and script errors. |
 | Visual inspection | Inspected the planner's desktop and mobile layouts. A separate WebKit run at a 390-pixel iPhone viewport opened both tools and checked the short-stock transition. The tests use browser emulation. |
+| Accessibility spot check | In Chromium at 390 CSS pixels, axe-core 4.10.3 found zero violations in the tested WCAG 2/2.1 A and AA rule set on both initial screens. The skip link received first keyboard focus. Opening the review log with Enter and dismissing with Escape restored focus to its button. This automated pass covers a subset of accessibility needs. |
 | Repeatable publication | The GitHub workflow gates Pages publication on the unit, HTTP and browser suites. Release notes identify the published smoke check. [Workflow](../.github/workflows/pages.yml) · [Run history](https://github.com/rongsenzhang/selvedge-sampling-studio/actions) |
+
+The first public deployment passed the same desktop and phone-width browser walkthroughs at the anonymous GitHub Pages URL, including save, reload, exported JSON and the rule workshop. [Deployment run](https://github.com/rongsenzhang/selvedge-sampling-studio/actions/runs/44833111036)
 
 ## Arithmetic spot-check
 
