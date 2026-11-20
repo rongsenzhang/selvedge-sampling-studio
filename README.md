@@ -1,6 +1,6 @@
 # Selvedge Studio
 
-**[Try the knowledge workshop](https://rongsenzhang.github.io/selvedge-sampling-studio/workshop.html)** · [Open the fabric book planner](https://rongsenzhang.github.io/selvedge-sampling-studio/) · [Version 1.0 release](https://github.com/rongsenzhang/selvedge-sampling-studio/releases/tag/v1.0.0)
+**[Try the knowledge workshop](https://rongsenzhang.github.io/selvedge-sampling-studio/workshop.html)** · [Open the fabric book planner](https://rongsenzhang.github.io/selvedge-sampling-studio/) · [v1.1 AI release](https://github.com/rongsenzhang/selvedge-sampling-studio/releases/tag/v1.1.0) · [Version 1.0 release](https://github.com/rongsenzhang/selvedge-sampling-studio/releases/tag/v1.0.0)
 
 A small interiors collection needs 180 presentation books in six colourways. Will rotating each swatch save material? What happens if the cloth must run in one direction, or the stock is short? Selvedge Studio takes that brief from layout and costing to an explained production review.
 

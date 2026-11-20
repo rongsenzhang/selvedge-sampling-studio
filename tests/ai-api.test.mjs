@@ -48,12 +48,17 @@ async function start(t, options = {}, file = ':memory:') {
   return { base, send, close };
 }
 
-test('disabled studio keeps the manual workshop available and the default examples empty', async (t) => {
+test('keyless studio keeps manual testing and the bundled recorded examples available', async (t) => {
   const { base, send } = await start(t);
   const config = await fetch(base + '/ai-config.json');
   assert.deepEqual(await config.json(), { endpoint: null });
   assert.equal(config.headers.get('cache-control'), 'no-store');
-  assert.deepEqual(await (await fetch(base + '/ai-examples.json')).json(), { examples: [] });
+  const { examples } = await (await fetch(base + '/ai-examples.json')).json();
+  assert.deepEqual(examples.map(item => item.scope), ['trial-reserve', 'needs-clarification']);
+  for (const item of examples) {
+    assert.ok(item.model && Number.isFinite(Date.parse(item.generatedAt)));
+    assert.ok(item.observation.includes(item.evidenceQuote));
+  }
   assert.equal((await fetch(base + '/workshop.html')).status, 200);
   assert.equal((await send(JSON.stringify({ observation: note }))).status, 503);
 });
